@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import css from "./Button.module.css";
 import fetchPhotos from "../../services/fetchPhotos";
 
-export default function Button({ onFetch, query, page, toggleLoader }) {
+export default function Button({ onFetch, query, page, setShowLoader }) {
 	const onButtonClick = async () => {
-		toggleLoader();
+		setShowLoader(true);
 		const images = await fetchPhotos(query, page + 1);
 
 		onFetch(images);
-		toggleLoader();
+		setShowLoader(false);
 	};
 
 	return (
@@ -23,5 +23,5 @@ Button.propTypes = {
 	onFetch: PropTypes.func.isRequired,
 	query: PropTypes.string.isRequired,
 	page: PropTypes.number.isRequired,
-	toggleLoader: PropTypes.func.isRequired,
+	setShowLoader: PropTypes.func.isRequired,
 };

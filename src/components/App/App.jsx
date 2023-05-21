@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState } from "react";
 
 import Searchbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
@@ -9,89 +9,71 @@ import Modal from "../Modal/Modal";
 
 import makeSmoothScroll from "../../services/smoothScroll";
 
-export default class App extends Component {
-	state = {
-		images: [],
-		isModalOpen: false,
-		showLoader: false,
-		currentModalImg: {},
-		searchQuery: "",
-		currentPage: 1,
+export default function App() {
+	const [images, setImages] = useState([]);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [showLoader, setShowLoader] = useState(false);
+	const [currentModalImg, setCurrentModalImg] = useState({});
+	const [searchQuery, setSearchQuery] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+
+	const closeModalReset = () => {
+		setIsModalOpen(false);
+		setCurrentModalImg({});
 	};
 
-	onESCPress = e => {
+	const onESCPress = e => {
 		if (e.code === "Escape") {
-			return this.setState({ isModalOpen: false, currentModalImg: {} });
+			return closeModalReset();
 		}
 	};
 
-	onLoadMoreClick = photos => {
-		this.setState(state => {
-			return {
-				images: [...state.images, ...photos],
-				currentPage: state.currentPage + 1,
-			};
-		});
+	const closeModal = e => {
+		const { currentTarget, target } = e;
+
+		if (currentTarget === target) {
+			return closeModalReset();
+		}
 	};
 
-	toggleLoader = () => {
-		this.setState(state => {
-			return { showLoader: !state.showLoader };
-		});
-	};
-
-	onFetchPhotos = (photos, query) => {
+	const onFetchPhotos = (photos, query) => {
 		setTimeout(() => {
 			makeSmoothScroll();
 		}, 200);
 
-		this.setState({ images: [...photos], searchQuery: `${query}`, currentPage: 1 });
+		setImages([...photos]);
+		setSearchQuery(query);
+		setCurrentPage(1);
 	};
 
-	closeModal = e => {
-		const { currentTarget, target } = e;
-
-		if (currentTarget === target) {
-			this.setState({ isModalOpen: false, currentModalImg: {} });
-		}
-	};
-
-	onImgClick = e => {
-		const { images } = this.state;
-
+	const onImgClick = e => {
 		const currentImg = images.find(image => image.id === Number(e.target.id));
-		this.setState({ currentModalImg: currentImg, isModalOpen: true });
+		setCurrentModalImg(currentImg);
+		setIsModalOpen(!isModalOpen);
 	};
 
-	render() {
-		const {
-			state: { images, isModalOpen, currentModalImg, searchQuery, currentPage, showLoader },
-			onFetchPhotos,
-			onLoadMoreClick,
-			onImgClick,
-			onESCPress,
-			closeModal,
-			toggleLoader,
-		} = this;
+	const onLoadMoreClick = photos => {
+		setImages(prev => [...prev, ...photos]);
+		setCurrentPage(prev => prev + 1);
+	};
 
-		return (
-			<>
-				<Searchbar onSubmit={onFetchPhotos} toggleLoader={toggleLoader}></Searchbar>
+	return (
+		<>
+			<Searchbar onSubmit={onFetchPhotos} setShowLoader={setShowLoader}></Searchbar>
 
-				<ImageGallery>
-					{images.map(({ tags, webformatURL, id }) => (
-						<ImageGalleryItem onClick={onImgClick} key={id} id={id} webURL={webformatURL} tags={tags} />
-					))}
-				</ImageGallery>
+			<ImageGallery>
+				{images.map(({ tags, webformatURL, id }) => (
+					<ImageGalleryItem onClick={onImgClick} key={id} id={id} webURL={webformatURL} tags={tags} />
+				))}
+			</ImageGallery>
 
-				<Loader visible={showLoader} />
+			<Loader visible={showLoader} />
 
-				{searchQuery && (
-					<Button toggleLoader={toggleLoader} onFetch={onLoadMoreClick} query={searchQuery} page={currentPage} />
-				)}
+			{searchQuery && (
+				<Button setShowLoader={setShowLoader} onFetch={onLoadMoreClick} query={searchQuery} page={currentPage} />
+			)}
 
-				{isModalOpen && <Modal onESCPress={onESCPress} closeModal={closeModal} currentModalImg={currentModalImg} />}
-			</>
-		);
-	}
+			{isModalOpen && <Modal onESCPress={onESCPress} closeModal={closeModal} currentModalImg={currentModalImg} />}
+		</>
+	);
 }

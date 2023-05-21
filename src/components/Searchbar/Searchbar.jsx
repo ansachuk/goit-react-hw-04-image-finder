@@ -8,7 +8,7 @@ import css from "./Searchbar.module.css";
 
 export default class Searchbar extends Component {
 	static propTypes = {
-		toggleLoader: PropTypes.func.isRequired,
+		setShowLoader: PropTypes.func.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 	};
 
@@ -25,16 +25,16 @@ export default class Searchbar extends Component {
 
 		const {
 			state: { query },
-			props: { toggleLoader, onSubmit },
+			props: { setShowLoader, onSubmit },
 		} = this;
 
 		if (query.trim() !== "") {
-			toggleLoader();
+			setShowLoader(true);
 			const images = await fetchPhotos(query);
 
 			onSubmit(images, query);
 
-			toggleLoader();
+			setShowLoader(false);
 
 			this.setState({
 				query: "",

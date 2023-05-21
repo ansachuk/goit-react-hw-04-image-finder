@@ -1,31 +1,24 @@
-import React, { Component } from "react";
+import { useEffect } from "react";
 import PropTypes from "prop-types";
 
 import css from "./Modal.module.css";
 
-export default class Modal extends Component {
-	componentDidMount = () => {
-		window.addEventListener("keydown", this.props.onESCPress);
-	};
+export default function Modal({ onESCPress, closeModal, currentModalImg: { largeImageURL, tags } }) {
+	useEffect(() => {
+		window.addEventListener("keydown", onESCPress);
 
-	componentWillUnmount = () => {
-		window.removeEventListener("keydown", this.props.onESCPress);
-	};
+		return () => {
+			window.removeEventListener("keydown", onESCPress);
+		};
+	}, [onESCPress]);
 
-	render() {
-		const {
-			currentModalImg: { largeImageURL, tags },
-			closeModal,
-		} = this.props;
-
-		return (
-			<div onClick={closeModal} className={css.Overlay}>
-				<div className={css.Modal}>
-					<img src={largeImageURL} alt={tags} />
-				</div>
+	return (
+		<div onClick={closeModal} className={css.Overlay}>
+			<div className={css.Modal}>
+				<img src={largeImageURL} alt={tags} />
 			</div>
-		);
-	}
+		</div>
+	);
 }
 
 Modal.propTypes = {
