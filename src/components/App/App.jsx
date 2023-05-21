@@ -59,7 +59,7 @@ export default function App() {
 
 	return (
 		<>
-			<Searchbar onSubmit={onFetchPhotos} setShowLoader={setShowLoader}></Searchbar>
+			<Searchbar onFetchPhotos={onFetchPhotos} setShowLoader={setShowLoader}></Searchbar>
 
 			<ImageGallery>
 				{images.map(({ tags, webformatURL, id }) => (
