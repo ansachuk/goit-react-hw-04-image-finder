@@ -13,10 +13,10 @@ const fetchPhotos = async (query, page = 1) => {
 		const { hits, total } = res.data;
 
 		if (page === 1) {
-			if (hits.length < PHOTOS_PER_PAGE) {
-				Notify.info(`We found only ${hits.length} images!`);
-			} else if (hits.length === 0) {
+			if (hits.length === 0) {
 				Notify.failure(`Ooops! No images by ${query} request!`);
+			} else if (hits.length < PHOTOS_PER_PAGE) {
+				Notify.info(`We found only ${hits.length} images!`);
 			} else {
 				Notify.success(`We found ${total} images!`);
 			}
