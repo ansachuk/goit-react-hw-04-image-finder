@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 
 import css from "./Modal.module.css";
 
-export default function Modal({ onESCPress, closeModal, currentModalImg: { largeImageURL, tags } }) {
+export default function Modal({ closeModalOnESCPress, closeModal, currentModalImg: { largeImageURL, tags } }) {
 	useEffect(() => {
-		window.addEventListener("keydown", onESCPress);
+		window.addEventListener("keydown", closeModalOnESCPress);
 
 		return () => {
-			window.removeEventListener("keydown", onESCPress);
+			window.removeEventListener("keydown", closeModalOnESCPress);
 		};
-	}, [onESCPress]);
+	}, [closeModalOnESCPress]);
 
 	return (
 		<div onClick={closeModal} className={css.Overlay}>
@@ -22,7 +22,7 @@ export default function Modal({ onESCPress, closeModal, currentModalImg: { large
 }
 
 Modal.propTypes = {
-	onESCPress: PropTypes.func.isRequired,
+	closeModalOnESCPress: PropTypes.func.isRequired,
 	currentModalImg: PropTypes.object.isRequired,
 	closeModal: PropTypes.func.isRequired,
 };

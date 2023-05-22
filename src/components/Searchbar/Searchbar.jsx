@@ -3,28 +3,26 @@ import PropTypes from "prop-types";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 
 import { ReactComponent as SearchIcon } from "../../icons/searc.svg";
-import fetchPhotos from "../../services/fetchPhotos";
+import makeSmoothScroll from "../../services/smoothScroll";
+
 import css from "./Searchbar.module.css";
 
-export default function Searchbar({ setShowLoader, onFetchPhotos }) {
+export default function Searchbar({ setSearchQuery, setCurrentPage }) {
 	const [query, setQuery] = useState("");
 
 	const onInputChange = e => {
 		setQuery(e.currentTarget.value);
 	};
 
-	const onSubmit = async e => {
+	const onSubmit = e => {
 		e.preventDefault();
 
 		if (query.trim() !== "") {
-			setShowLoader(true);
-			const images = await fetchPhotos(query);
-
-			onFetchPhotos(images, query);
-
-			setShowLoader(false);
-
-			setQuery("");
+			setSearchQuery(query);
+			setCurrentPage(1);
+			setTimeout(() => {
+				makeSmoothScroll();
+			}, 200);
 		} else {
 			Notify.warning("Please, enter a query!");
 
@@ -57,6 +55,5 @@ export default function Searchbar({ setShowLoader, onFetchPhotos }) {
 }
 
 Searchbar.propTypes = {
-	setShowLoader: PropTypes.func.isRequired,
-	onSubmit: PropTypes.func.isRequired,
+	setSearchQuery: PropTypes.func.isRequired,
 };

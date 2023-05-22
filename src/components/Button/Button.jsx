@@ -1,15 +1,10 @@
 import PropTypes from "prop-types";
 
 import css from "./Button.module.css";
-import fetchPhotos from "../../services/fetchPhotos";
 
-export default function Button({ onFetch, query, page, setShowLoader }) {
-	const onButtonClick = async () => {
-		setShowLoader(true);
-		const images = await fetchPhotos(query, page + 1);
-
-		onFetch(images);
-		setShowLoader(false);
+export default function Button({ setCurrentPage }) {
+	const onButtonClick = () => {
+		setCurrentPage(prev => prev + 1);
 	};
 
 	return (
@@ -20,8 +15,5 @@ export default function Button({ onFetch, query, page, setShowLoader }) {
 }
 
 Button.propTypes = {
-	onFetch: PropTypes.func.isRequired,
-	query: PropTypes.string.isRequired,
-	page: PropTypes.number.isRequired,
-	setShowLoader: PropTypes.func.isRequired,
+	setCurrentPage: PropTypes.func.isRequired,
 };
